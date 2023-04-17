@@ -1,3 +1,8 @@
+import tracemalloc
+
+tracemalloc.start()
+
+
 import os
 import glob
 from telegram import Bot
@@ -19,3 +24,6 @@ chat_id = "-1001536276424"
 for file in files:
     with open(file, "rb") as f:
         bot.send_document(chat_id=chat_id, document=f)
+
+tracemalloc.stop()
+        
