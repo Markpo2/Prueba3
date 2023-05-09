@@ -1,23 +1,23 @@
 import telebot
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+import os
 
 API_KEY = "6043283784:AAHLV11M9g3gaDj5dE-Sr5fKhSCd8CT-lOc"
 
 bot = telebot.TeleBot(API_KEY)
 
-# Authenticate Google Drive API
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
-drive = GoogleDrive(gauth)
-folder_id = '<1QHq23D0ZrWIumpZHEUociQTSgB3uY6fo>' # Replace with the ID of your Google Drive folder
-
 @bot.message_handler(commands=['start'])
 def start(message):
-    folder = drive.CreateFile({'id': folder_id})
-    folder.FetchMetadata()
-    folder_url = folder['alternateLink'] # Get the shareable link
-    bot.reply_to(message, "Hello, I am a Telegram bot. Here's the link to the folder: {}".format(folder_url))
+    # Define the folder path to send
+    folder_path = "/content/downloads1"
+
+    # Check if the folder exists
+    if os.path.exists(folder_path):
+        # Send the folder to the user
+        bot.send_document(message.chat.id, open(folder_path, 'rb'))
+    else:
+        bot.reply_to(message, "The folder does not exist.")
+
+    bot.reply_to(message, "Hello, I am a Telegram bot. Use /help to see what I can do.")
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -30,6 +30,6 @@ def info(message):
 @bot.message_handler(commands=['status'])
 def status(message):
     bot.reply_to(message, "I am up and running.")
-
+    
 print("Hey, I am up....")
 bot.polling()
