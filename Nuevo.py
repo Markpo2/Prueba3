@@ -10,7 +10,7 @@ bot = telebot.TeleBot(API_KEY)
 gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
-folder_id = '<your_folder_id_here>' # Replace with the ID of your Google Drive folder
+folder_id = '<1QHq23D0ZrWIumpZHEUociQTSgB3uY6fo>' # Replace with the ID of your Google Drive folder
 
 @bot.message_handler(commands=['start'])
 def start(message):
