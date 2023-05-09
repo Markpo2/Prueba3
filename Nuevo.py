@@ -11,9 +11,16 @@ def start(message):
     folder_path = "/content/downloads1"
 
     # Check if the folder exists
-    if os.path.exists(folder_path):
-        # Send the folder to the user
-        bot.send_document(message.chat.id, open(folder_path, 'rb'))
+    if os.path.exists(folder_path) and os.path.isdir(folder_path):
+        # Get a list of files in the folder
+        file_list = os.listdir(folder_path)
+
+        # Send each file to the user as a document
+        for file_name in file_list:
+            file_path = os.path.join(folder_path, file_name)
+            if os.path.isfile(file_path):
+                with open(file_path, 'rb') as f:
+                    bot.send_document(message.chat.id, f)
     else:
         bot.reply_to(message, "The folder does not exist.")
 
