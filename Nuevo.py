@@ -1,29 +1,35 @@
-import tracemalloc
+import telebot
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
-tracemalloc.start()
+API_KEY = "6043283784:AAHLV11M9g3gaDj5dE-Sr5fKhSCd8CT-lOc"
 
+bot = telebot.TeleBot(API_KEY)
 
-import os
-import glob
-from telegram import Bot
-from telegram.ext import Updater
+# Authenticate Google Drive API
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
+folder_id = '<your_folder_id_here>' # Replace with the ID of your Google Drive folder
 
-# Define la ruta de la carpeta que deseas subir
-folder_path = "/content/downloads"
+@bot.message_handler(commands=['start'])
+def start(message):
+    folder = drive.CreateFile({'id': folder_id})
+    folder.FetchMetadata()
+    folder_url = folder['alternateLink'] # Get the shareable link
+    bot.reply_to(message, "Hello, I am a Telegram bot. Here's the link to the folder: {}".format(folder_url))
 
-# Obtiene una lista de archivos en la carpeta
-files = glob.glob(os.path.join(folder_path, "*"))
+@bot.message_handler(commands=['help'])
+def help(message):
+    bot.reply_to(message, "I support the following commands: \n /start \n /info \n /help \n /status")
 
-# Crea una instancia del bot de Telegram
-bot = Bot(token="1afa55a5f3bf7058c843d1b290f79c49")
+@bot.message_handler(commands=['info'])
+def info(message):
+    bot.reply_to(message, "I am a simple Telegram bot created using the python-telegram-bot library.")
 
-# Define el ID del chat al que deseas enviar los archivos
-chat_id = "-1001536276424"
+@bot.message_handler(commands=['status'])
+def status(message):
+    bot.reply_to(message, "I am up and running.")
 
-# Recorre cada archivo en la carpeta y envía el archivo al chat
-for file in files:
-    with open(file, "rb") as f:
-        bot.send_document(chat_id=chat_id, document=f)
-
-tracemalloc.stop()
-        
+print("Hey, I am up....")
+bot.polling()
