@@ -1,21 +1,21 @@
 import os
 import telegram
-from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from urllib.request import urlretrieve
 
 # Configura el token de autenticación del bot
-TOKEN = '6043283784:AAHLV11M9g3gaDj5dE-Sr5fKhSCd8CT-lOc'
+TOKEN = 'INSERTA_TU_TOKEN_AQUÍ'
 
 # Crea un objeto de bot de Telegram
 bot = telegram.Bot(token=TOKEN)
 
 # Define una función para manejar los mensajes enviados al bot
-def handle_message(update: Update, context):
+def handle_message(update, context):
     message = update.message
     text = message.text
     
-    # Si el mensaje es un enlace de descarga que contiene "zip" o "rar" o "mkv" o "mp4"
-    if text.startswith('http') and ('.zip' in text or '.rar' in text or '.mkv' in text or '.mp4' in text):
+    # Si el mensaje es un enlace de descarga que contiene "zip" o "rar"
+    if text.startswith('http') and ('.zip' in text or '.rar' in text):
         # Descarga el archivo desde el enlace
         file_name, headers = urlretrieve(text)
         # Envia el archivo como un documento adjunto
@@ -24,7 +24,7 @@ def handle_message(update: Update, context):
         os.remove(file_name)
     else:
         # Responde con un mensaje si el usuario no proporciona un enlace de descarga válido.
-        message.reply_text('Por favor, proporciona un enlace de descarga válido que contenga "zip", "rar", "mkv" o "mp4".')
+        message.reply_text('Por favor, proporciona un enlace de descarga válido que contenga "zip" o "rar".')
 
 # Define una función para manejar los errores
 def handle_error(update, context):
@@ -32,10 +32,10 @@ def handle_error(update, context):
     print(f'Error: {error}')
 
 # Crea un objeto de actualización para recibir las actualizaciones del bot
-updater = telegram.Updater(TOKEN, use_context=True)
+updater = Updater(TOKEN, use_context=True)
 
 # Registra la función de manejo de mensajes y errores con el objeto de actualización
-updater.dispatcher.add_handler(telegram.ext.MessageHandler(telegram.ext.Filters.text, handle_message))
+updater.dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
 updater.dispatcher.add_error_handler(handle_error)
 
 # Inicia el bot y espera a que lleguen nuevos mensajes
