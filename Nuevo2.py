@@ -1,5 +1,6 @@
 import os
 import telegram
+from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from urllib.request import urlretrieve
 
@@ -14,8 +15,8 @@ def handle_message(update, context):
     message = update.message
     text = message.text
     
-    # Si el mensaje es un enlace de descarga que contiene "zip" o "rar"
-    if text.startswith('http') and ('.zip' in text or '.rar' in text):
+    # Si el mensaje es un enlace de descarga que contiene "mkv" o "mp4"
+    if text.startswith('http') and ('.mkv' in text or '.mp4' in text):
         # Descarga el archivo desde el enlace
         file_name, headers = urlretrieve(text)
         # Envia el archivo como un documento adjunto
@@ -24,7 +25,7 @@ def handle_message(update, context):
         os.remove(file_name)
     else:
         # Responde con un mensaje si el usuario no proporciona un enlace de descarga válido.
-        message.reply_text('Por favor, proporciona un enlace de descarga válido que contenga "zip" o "rar".')
+        message.reply_text('Por favor, proporciona un enlace de descarga válido que contenga "mkv" o "mp4".')
 
 # Define una función para manejar los errores
 def handle_error(update, context):
